@@ -102,6 +102,7 @@ from torchdata.datapipes.iter.util.ziparchiveloader import (
     ZipArchiveLoaderIterDataPipe as ZipArchiveLoader,
     ZipArchiveReaderIterDataPipe as ZipArchiveReader,
 )
+from torchdata.datapipes.map.util.converter import MapToIterConverterIterDataPipe as MapToIterConverter
 
 ###############################################################################
 # Reference From PyTorch Core
@@ -147,6 +148,7 @@ __all__ = [
     "JsonParser",
     "LineReader",
     "MapKeyZipper",
+    "MapToIterConverter",
     "Mapper",
     "MaxTokenBucketizer",
     "Multiplexer",
