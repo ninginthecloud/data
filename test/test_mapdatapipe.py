@@ -3,7 +3,7 @@ import unittest
 
 import expecttest
 from torchdata.datapipes.iter import MapToIterConverter
-from torchdata.datapipes.map import MapDataPipe, SequenceWrapper, UnZipper
+from torchdata.datapipes.map import InMemoryCacheHolder, MapDataPipe, SequenceWrapper, UnZipper
 
 
 class TestMapDataPipe(expecttest.TestCase):
@@ -55,6 +55,28 @@ class TestMapDataPipe(expecttest.TestCase):
         # __len__ Test: the lengths of the output is correct
         self.assertEqual(10, len(iter_dp))
         self.assertEqual(3, len(iter_dp2))
+
+    def test_in_memory_cache_holder_mapdatapipe(self) -> None:
+        source_dp = SequenceWrapper(range(10))
+        cache_dp = source_dp.in_memory_cache()
+
+        # Functional Test: Cache DP should just return the data without changing the values
+        self.assertEqual(list(range(10)), list(cache_dp))
+
+        # Functional Test: Ensure the objects are the same ones from source DataPipe
+        cache_dp = InMemoryCacheHolder(source_dp)  # type: ignore[arg-type]
+        res1 = list(cache_dp)
+        res2 = list(cache_dp)
+        self.assertTrue(id(source) == id(cache) for source, cache in zip(source_dp, res1))
+        self.assertTrue(id(source) == id(cache) for source, cache in zip(source_dp, res2))
+
+        # Functional Test: Ensure the DataPipe works with custom cache object and non-numeric data
+        source_dp = SequenceWrapper([str(i) for i in range(10)])
+        cache_dp2 = source_dp.in_memory_cache([None] * len(source_dp))
+        self.assertEqual([str(i) for i in range(10)], list(cache_dp2))
+
+        # __len__ Test: inherits length from source_dp
+        self.assertEqual(10, len(cache_dp))
 
 
 if __name__ == "__main__":
