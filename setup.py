@@ -123,6 +123,7 @@ if __name__ == "__main__":
         package_data={
             "torchdata": [
                 "datapipes/iter/*.pyi",
+                "datapipes/map/*.pyi",
             ],
         },
         # Package Info
